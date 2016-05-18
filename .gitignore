@@ -1,0 +1,18 @@
+generated/
+*.class
+target/
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea
+
+*.log
+
+# Heroku stuff
+app.json
+Procfile
+system.properties
+
+# vi backup file
+*~
