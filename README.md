@@ -18,7 +18,7 @@ This module is invoked manually as a one-time step to load actor/movie data into
 2) Fire up a local or remote [Neo4J](http://neo4j.com/) DB.
 3) Set  environment variables:
 
-        export ACTOR_FILES_DIR=<local_dir>
+        export ACTOR_FILE_DIR=<local_dir>
         export NEO4J_DB_URL=<neo4j_db_url>
         export NEO4J_DB_USER=<neo4j_db_user>
         export NEO4J_DB_PASSWORD=<neo4j_db_password>

@@ -1,0 +1,7 @@
+----            ------
+Bar1, Foo1  MovieA (1955)
+    MovieB (1954)  <5>
+    MovieC (1954)  <5>
+Bar2, Foo2  MovieB (1955)
+    MovieC (1954)  <5>
+Bar3, Foo3  MovieA (1955)
