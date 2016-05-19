@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MovieLynxDBLoaderTest {
-    private static MovieLynxDBLoader defaultLoader = null;
     private static File workDir = null;
 
     @BeforeClass
@@ -40,16 +39,20 @@ public class MovieLynxDBLoaderTest {
             IOUtils.copy(bundledFileInputStream, outputStream);
             outputStream.close();
         }
+    }
+
+    @Test
+    public void testEnvSettings1Present() throws Exception {
         MockEnvironment env = new MockEnvironment();
         env.setValue(MovieLynxDBLoader.ACTOR_FILE_DIR_ENV_VAR, workDir.getAbsolutePath());
         env.setValue(MovieLynxDBLoader.NEO4J_DB_URL_ENV_VAR, "tbd");
         env.setValue(MovieLynxDBLoader.NEO4J_DB_USER_ENV_VAR, "tbd");
         env.setValue(MovieLynxDBLoader.NEO4J_DB_PASSWORD_ENV_VAR, "tbd");
-        defaultLoader = new MovieLynxDBLoader(env);
+        new MovieLynxDBLoader(env);
     }
 
     @Test
-    public void testEnvSettings1MissingAll() throws Exception {
+    public void testEnvSettings2MissingAll() throws Exception {
         boolean gotException = false;
         try {
             new MovieLynxDBLoader(new MockEnvironment());
@@ -60,7 +63,7 @@ public class MovieLynxDBLoaderTest {
     }
 
     @Test
-    public void testEnvSettings2MissingDBInfo() throws Exception {
+    public void testEnvSettings3MissingDBInfo() throws Exception {
         MockEnvironment env = new MockEnvironment();
         env.setValue(MovieLynxDBLoader.ACTOR_FILE_DIR_ENV_VAR, workDir.getAbsolutePath());
         boolean gotException = false;
@@ -73,7 +76,7 @@ public class MovieLynxDBLoaderTest {
     }
 
     @Test
-    public void testEnvSettings3EmptyDir() throws Exception {
+    public void testEnvSettings4EmptyDir() throws Exception {
         File tmpDir = File.createTempFile("MovieLynxDBLoaderTest-emptyDir", "actorfile");
         tmpDir.mkdir();
 
@@ -91,14 +94,20 @@ public class MovieLynxDBLoaderTest {
         assertTrue(gotException);
     }
 
-    /*
-    public void foo1() {
-
-
+    @Test
+    public void testLoadIntoDB() throws Exception {
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(workDir)
-                .setConfig(GraphDatabaseSettings.pagecache_memory, "512M")
+                .setConfig(GraphDatabaseSettings.pagecache_memory, "128M")
                 .setConfig(GraphDatabaseSettings.string_block_size, "60")
                 .setConfig(GraphDatabaseSettings.array_block_size, "300").newGraphDatabase();
+        MockEnvironment env = new MockEnvironment();
+        env.setValue(MovieLynxDBLoader.ACTOR_FILE_DIR_ENV_VAR, workDir.getAbsolutePath());
+        env.setValue(MovieLynxDBLoader.NEO4J_DB_URL_ENV_VAR, "tbd");
+        env.setValue(MovieLynxDBLoader.NEO4J_DB_USER_ENV_VAR, "tbd");
+        env.setValue(MovieLynxDBLoader.NEO4J_DB_PASSWORD_ENV_VAR, "tbd");
+
+        MovieLynxDBLoader defaultLoader = new MovieLynxDBLoader(env);
+        defaultLoader.load();
 
         Node firstNode = graphDb.createNode();
         firstNode.setProperty("message", "Hello, ");
@@ -107,43 +116,16 @@ public class MovieLynxDBLoaderTest {
 
         //Relationship relationship = firstNode.createRelationshipTo(secondNode, RelTypes.KNOWS);
         //relationship.setProperty("message", "brave Neo4j ");
+        //String query = "MATCH (n) RETURN n.actor";
+        //Result result = graphDb.execute(query);
+        //List<String> actorNames = new ArrayList<>();
+        //while (result.hasNext()) {
+        //    actorNames.add(result.next().get("n.name").toString());
+        // }
+        // assertEquals(actorNames, Arrays.asList("Carmencita Abad"));
+        // graphDb.shutdown();
 
     }
-
-    @Test
-    public void testE2E0() throws Exception {
-        //System.setProperty(MovieLynxDBLoader.ACTOR_FILE_DIR_ENV_VAR, "d:\\tmp");
-
-        MovieLynxDBLoader loader = new MovieLynxDBLoader();
-        GraphDatabaseService neo4jDB = null;
-        loader.load();
-    }
-
-
-    //@Test
-    public void testE2E1() throws Exception {
-        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(workDir).
-                setConfig(GraphDatabaseSettings.pagecache_memory, "50M")
-                .setConfig(GraphDatabaseSettings.string_block_size, "60")
-                .setConfig(GraphDatabaseSettings.array_block_size, "300").se.newGraphDatabase();
-
-
-        new MovieLynxDBLoader().load();
-
-        String query = "MATCH (n) RETURN n.actor";
-        Result result = graphDb.execute(query);
-
-
-        List<String> actorNames = new ArrayList<>();
-        while (result.hasNext()) {
-            actorNames.add(result.next().get("n.name").toString());
-        }
-        assertEquals(actorNames, Arrays.asList("Carmencita Abad"));
-        graphDb.shutdown();
-
-
-    }
-    */
 
     private static class MockEnvironment extends Environment {
         Map<String, String> envMap = null;
